@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Application": {
+      "commandName": "Project",
+      "commandLineArgs": "https://api.codenation.dev/v1/challenge/dev-ps/generate-data?token=a0502e8163dd2338d5adc848bae6433a681e1610 https://api.codenation.dev/v1/challenge/dev-ps/submit-solution?token=a0502e8163dd2338d5adc848bae6433a681e1610"
+    }
+  }
+}
