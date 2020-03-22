@@ -1,2 +1,2 @@
 # ChallengeCodenation
-Desafio para curso de react feito pela odenation
+Desafio para curso de react feito pela Codenation
