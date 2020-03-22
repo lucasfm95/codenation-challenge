@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using System;
 
 namespace Application
 {
@@ -34,8 +33,8 @@ namespace Application
 
             var result = await SendFile( urlSendFile, pathFile );
 
-            Console.WriteLine("Processo finalizado.");
-            Console.WriteLine($"Score: {result.Score}");
+            Console.WriteLine( "Processo finalizado." );
+            Console.WriteLine( $"Score: {result.Score}" );
         }
 
         public string GetSha1( string text )
@@ -65,32 +64,48 @@ namespace Application
 
         private async Task<AnswerModel> GetFile( string urlGetFile )
         {
-            HttpResponseMessage response = await m_Client.GetAsync( urlGetFile );
+            try
+            {
+                HttpResponseMessage response = await m_Client.GetAsync( urlGetFile );
 
-            string responseBodyAsText = await response.Content.ReadAsStringAsync( );
+                string responseBodyAsText = await response.Content.ReadAsStringAsync( );
 
-            AnswerModel answer = JsonConvert.DeserializeObject<AnswerModel>( responseBodyAsText );
+                AnswerModel answer = JsonConvert.DeserializeObject<AnswerModel>( responseBodyAsText );
 
-            return answer;
+                return answer;
+            }
+            catch ( Exception ex )
+            {
+                Console.WriteLine( ex.Message );
+                throw new Exception( "error", ex );
+            }
         }
 
         private async Task<ChallengeResponseModel> SendFile( string url, string filePath )
         {
-            MultipartFormDataContent form = new MultipartFormDataContent( );
+            try
+            {
+                MultipartFormDataContent form = new MultipartFormDataContent( );
 
-            var fileContent = new ByteArrayContent( await File.ReadAllBytesAsync( filePath ) );
+                var fileContent = new ByteArrayContent( await File.ReadAllBytesAsync( filePath ) );
 
-            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse( "multipart/form-data" );
-            
-            form.Add( fileContent, "answer", Path.GetFileName( filePath ) );
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse( "multipart/form-data" );
 
-            var response = await m_Client.PostAsync( url, form );
+                form.Add( fileContent, "answer", Path.GetFileName( filePath ) );
 
-            var responseContent = await response.Content.ReadAsStringAsync( );
+                var response = await m_Client.PostAsync( url, form );
 
-            ChallengeResponseModel challengeResponse = JsonConvert.DeserializeObject<ChallengeResponseModel>( responseContent );
+                var responseContent = await response.Content.ReadAsStringAsync( );
 
-            return challengeResponse;
+                ChallengeResponseModel challengeResponse = JsonConvert.DeserializeObject<ChallengeResponseModel>( responseContent );
+
+                return challengeResponse;
+            }
+            catch ( Exception ex )
+            {
+                Console.WriteLine( ex.Message );
+                throw new Exception( "error", ex );
+            }
         }
     }
 }
